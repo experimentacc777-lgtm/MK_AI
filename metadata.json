@@ -1,0 +1,8 @@
+{
+  "name": "MK AI.",
+  "description": "MK AI is a powerful, unified chat experience featuring smart intent detection, high-quality image generation and editing, and deep-web research capabilities. Created and owned by Mohtashim Khan.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
