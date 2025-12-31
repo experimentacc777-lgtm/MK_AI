@@ -4,7 +4,10 @@ import { MODELS, SYSTEM_INSTRUCTION } from "../constants";
 import { Intent } from "../types";
 import { applyWatermark } from "./imageService";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+/**
+ * Creates a fresh instance of the AI client using the current environment key.
+ */
+const getAIClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 /**
  * Detects the user's intent based on text and presence of image.
@@ -29,6 +32,7 @@ export const detectIntent = async (text: string, hasImage: boolean): Promise<Int
   `;
 
   try {
+    const ai = getAIClient();
     const response = await ai.models.generateContent({
       model: MODELS.TEXT,
       contents: prompt,
@@ -36,7 +40,8 @@ export const detectIntent = async (text: string, hasImage: boolean): Promise<Int
     });
     const result = response.text?.trim() as Intent;
     return Object.values(Intent).includes(result) ? result : Intent.CHAT;
-  } catch {
+  } catch (error) {
+    console.error("Intent Detection Failed:", error);
     return Intent.CHAT;
   }
 };
@@ -49,6 +54,7 @@ export const processUserRequest = async (
   intent: Intent, 
   imageUri?: string
 ): Promise<{ text?: string; imageUrl?: string; sources?: any[] }> => {
+  const ai = getAIClient();
   
   if (intent === Intent.IMAGE_GEN) {
     const response = await ai.models.generateContent({
